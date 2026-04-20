@@ -1,0 +1,245 @@
+<?xml version="1.0"?>
+<robot name="quadrotor" xmlns:xacro="http://www.ros.org/wiki/xacro">
+
+  <!-- ======================================================
+       PROPERTIES
+  ====================================================== -->
+  <xacro:property name="body_mass"   value="1.5"/>
+  <xacro:property name="body_radius" value="0.15"/>
+  <xacro:property name="body_length" value="0.06"/>
+
+  <xacro:property name="arm_mass"    value="0.05"/>
+  <xacro:property name="arm_length"  value="0.22"/>
+  <xacro:property name="arm_radius"  value="0.01"/>
+
+  <xacro:property name="rotor_mass"  value="0.01"/>
+  <xacro:property name="rotor_radius" value="0.12"/>
+
+  <!-- ======================================================
+       MATERIALS
+  ====================================================== -->
+  <material name="dark_grey">
+    <color rgba="0.2 0.2 0.2 1.0"/>
+  </material>
+  <material name="orange">
+    <color rgba="1.0 0.5 0.0 1.0"/>
+  </material>
+  <material name="light_grey">
+    <color rgba="0.7 0.7 0.7 1.0"/>
+  </material>
+
+  <!-- ======================================================
+       MACROS
+  ====================================================== -->
+
+  <!-- Rotor macro -->
+  <xacro:macro name="rotor" params="name x y z color">
+    <link name="${name}">
+      <visual>
+        <origin xyz="0 0 0" rpy="0 0 0"/>
+        <geometry>
+          <cylinder radius="${rotor_radius}" length="0.005"/>
+        </geometry>
+        <material name="${color}"/>
+      </visual>
+      <collision>
+        <origin xyz="0 0 0" rpy="0 0 0"/>
+        <geometry>
+          <cylinder radius="${rotor_radius}" length="0.005"/>
+        </geometry>
+      </collision>
+      <inertial>
+        <mass value="${rotor_mass}"/>
+        <inertia ixx="0.0001" ixy="0" ixz="0"
+                 iyy="0.0001" iyz="0"
+                 izz="0.0002"/>
+      </inertial>
+    </link>
+    <joint name="${name}_joint" type="fixed">
+      <parent link="base_link"/>
+      <child  link="${name}"/>
+      <origin xyz="${x} ${y} ${z}" rpy="0 0 0"/>
+    </joint>
+  </xacro:macro>
+
+  <!-- Arm macro -->
+  <xacro:macro name="arm" params="name roll pitch yaw">
+    <link name="${name}">
+      <visual>
+        <origin xyz="${arm_length/2} 0 0" rpy="0 0 0"/>
+        <geometry>
+          <cylinder radius="${arm_radius}" length="${arm_length}"/>
+        </geometry>
+        <material name="dark_grey"/>
+      </visual>
+      <inertial>
+        <mass value="${arm_mass}"/>
+        <inertia ixx="0.00001" ixy="0" ixz="0"
+                 iyy="0.0001"  iyz="0"
+                 izz="0.0001"/>
+      </inertial>
+    </link>
+    <joint name="${name}_joint" type="fixed">
+      <parent link="base_link"/>
+      <child  link="${name}"/>
+      <origin xyz="0 0 0" rpy="${roll} ${pitch} ${yaw}"/>
+    </joint>
+  </xacro:macro>
+
+  <!-- ======================================================
+       BASE LINK (drone body)
+  ====================================================== -->
+  <link name="base_link">
+    <visual>
+      <origin xyz="0 0 0" rpy="0 0 0"/>
+      <geometry>
+        <cylinder radius="${body_radius}" length="${body_length}"/>
+      </geometry>
+      <material name="dark_grey"/>
+    </visual>
+    <collision>
+      <origin xyz="0 0 0" rpy="0 0 0"/>
+      <geometry>
+        <cylinder radius="${body_radius}" length="${body_length}"/>
+      </geometry>
+    </collision>
+    <inertial>
+      <mass value="${body_mass}"/>
+      <inertia ixx="0.0083" ixy="0" ixz="0"
+               iyy="0.0083" iyz="0"
+               izz="0.0165"/>
+    </inertial>
+  </link>
+
+  <!-- ======================================================
+       ARMS  (4 arms at 45°, 135°, 225°, 315°)
+  ====================================================== -->
+  <xacro:arm name="arm_fl" roll="0" pitch="0" yaw="0.785"/>
+  <xacro:arm name="arm_fr" roll="0" pitch="0" yaw="-0.785"/>
+  <xacro:arm name="arm_rl" roll="0" pitch="0" yaw="2.356"/>
+  <xacro:arm name="arm_rr" roll="0" pitch="0" yaw="-2.356"/>
+
+  <!-- ======================================================
+       ROTORS
+  ====================================================== -->
+  <xacro:rotor name="rotor_fl" x=" 0.18"  y=" 0.18"  z="0.025" color="orange"/>
+  <xacro:rotor name="rotor_fr" x=" 0.18"  y="-0.18"  z="0.025" color="light_grey"/>
+  <xacro:rotor name="rotor_rl" x="-0.18"  y=" 0.18"  z="0.025" color="light_grey"/>
+  <xacro:rotor name="rotor_rr" x="-0.18"  y="-0.18"  z="0.025" color="orange"/>
+
+  <!-- ======================================================
+       IMU LINK
+  ====================================================== -->
+  <link name="imu_link">
+    <inertial>
+      <mass value="0.001"/>
+      <inertia ixx="0.000001" ixy="0" ixz="0"
+               iyy="0.000001" iyz="0"
+               izz="0.000001"/>
+    </inertial>
+  </link>
+  <joint name="imu_joint" type="fixed">
+    <parent link="base_link"/>
+    <child  link="imu_link"/>
+    <origin xyz="0 0 0" rpy="0 0 0"/>
+  </joint>
+
+  <!-- ======================================================
+       LIDAR LINK  (2D laser scanner, mounted on top)
+  ====================================================== -->
+  <link name="laser_link">
+    <visual>
+      <origin xyz="0 0 0" rpy="0 0 0"/>
+      <geometry>
+        <cylinder radius="0.03" length="0.04"/>
+      </geometry>
+      <material name="orange"/>
+    </visual>
+    <collision>
+      <geometry>
+        <cylinder radius="0.03" length="0.04"/>
+      </geometry>
+    </collision>
+    <inertial>
+      <mass value="0.05"/>
+      <inertia ixx="0.000001" ixy="0" ixz="0"
+               iyy="0.000001" iyz="0"
+               izz="0.000001"/>
+    </inertial>
+  </link>
+  <joint name="laser_joint" type="fixed">
+    <parent link="base_link"/>
+    <child  link="laser_link"/>
+    <origin xyz="0 0 0.05" rpy="0 0 0"/>
+  </joint>
+
+  <!-- ======================================================
+       GAZEBO PLUGINS
+  ====================================================== -->
+
+  <!-- IMU plugin -->
+  <gazebo reference="imu_link">
+    <sensor name="imu_sensor" type="imu">
+      <always_on>true</always_on>
+      <update_rate>100</update_rate>
+      <plugin name="imu_plugin" filename="libgazebo_ros_imu_sensor.so">
+        <ros>
+          <remapping>~/out:=imu/data</remapping>
+        </ros>
+        <initial_orientation_as_reference>false</initial_orientation_as_reference>
+      </plugin>
+    </sensor>
+  </gazebo>
+
+  <!-- 2D Lidar plugin -->
+  <gazebo reference="laser_link">
+    <sensor name="laser_sensor" type="ray">
+      <always_on>true</always_on>
+      <update_rate>10</update_rate>
+      <ray>
+        <scan>
+          <horizontal>
+            <samples>360</samples>
+            <resolution>1</resolution>
+            <min_angle>-3.14159</min_angle>
+            <max_angle> 3.14159</max_angle>
+          </horizontal>
+        </scan>
+        <range>
+          <min>0.12</min>
+          <max>10.0</max>
+          <resolution>0.01</resolution>
+        </range>
+        <noise>
+          <type>gaussian</type>
+          <mean>0.0</mean>
+          <stddev>0.01</stddev>
+        </noise>
+      </ray>
+      <plugin name="laser_plugin" filename="libgazebo_ros_ray_sensor.so">
+        <ros>
+          <remapping>~/out:=scan</remapping>
+        </ros>
+        <output_type>sensor_msgs/LaserScan</output_type>
+        <frame_name>laser_link</frame_name>
+      </plugin>
+    </sensor>
+  </gazebo>
+
+  <!-- Planar move plugin (simulates drone horizontal flight) -->
+  <gazebo>
+    <plugin name="planar_move" filename="libgazebo_ros_planar_move.so">
+      <ros>
+        <remapping>cmd_vel:=cmd_vel</remapping>
+        <remapping>odom:=odom</remapping>
+      </ros>
+      <update_rate>20</update_rate>
+      <publish_rate>20</publish_rate>
+      <publish_odom>true</publish_odom>
+      <publish_odom_tf>true</publish_odom_tf>
+      <odometry_frame>odom</odometry_frame>
+      <robot_base_frame>base_link</robot_base_frame>
+    </plugin>
+  </gazebo>
+
+</robot>
