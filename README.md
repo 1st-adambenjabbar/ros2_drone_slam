@@ -1,55 +1,56 @@
 # ROS2 Drone SLAM
 
-A simulated quadrotor drone that autonomously maps its environment using SLAM (Simultaneous Localization And Mapping), built with **ROS2 Humble** and **Gazebo**.
+Un drone quadrotor simulé qui cartographie de manière autonome son environnement en utilisant le SLAM (Simultaneous Localization And Mapping), construit avec **ROS2 Humble** et **Gazebo**.
+
+![Drone Simulation Demo](https://private-us-east-1.manuscdn.com/sessionFile/ESokvG6NaM8fsZUz6430c3/sandbox/OAyKO9aqAKExUsctfu3WVD-images_1777405804074_na1fn_L2hvbWUvdWJ1bnR1L3JvczJfZHJvbmVfc2xhbS9kcm9uZV9kZW1v.gif?Policy=eyJTdGF0ZW1lbnQiOlt7IlJlc291cmNlIjoiaHR0cHM6Ly9wcml2YXRlLXVzLWVhc3QtMS5tYW51c2Nkbi5jb20vc2Vzc2lvbkZpbGUvRVNva3ZHNk5hTThmc1pVejY0MzBjMy9zYW5kYm94L09BeUtPOWFxQUtFeFVzY3RmdTNXVkQtaW1hZ2VzXzE3Nzc0MDU4MDQwNzRfbmExZm5fTDJodmJXVXZkV0oxYm5SMUwzSnZjekpmWkhKdmJtVmZjMnhoYlM5a2NtOXVaVjlrWlcxdi5naWYiLCJDb25kaXRpb24iOnsiRGF0ZUxlc3NUaGFuIjp7IkFXUzpFcG9jaFRpbWUiOjE3OTg3NjE2MDB9fX1dfQ__&Key-Pair-Id=K2HSFNDJXOU9YS&Signature=WGKA6fFlFXwrx1LJt0GqTX1CBpiE-2R65ewTNoKRf6GEchS3VPpHarEW26rDBxNdlqzrF5lO8KbvLVrIC-O51HJ0FLFgp1LhsB4ZokVavgpHApw2-op2BZuAd1Qm3T9DfsPnLVp3iF-SBB7wER5EGjgohsd06QyjeE0xkIZUhANBa3-2JvZY0F6mlUzjX1JJwn-yog6hX4QS4zt94kUZS4zmYu7MxzJbbqRx6Xh5MZY3Of5TQTa9azSvU2C7Ki5q3~uy5z-F7bSuWjjLWAZNIsgwTsFQISj~KdNSR5mOG16M9T100QZoT7Vf-KePTqHQzqbxls-CZ5QtH8TnNYGDaw__)
 
 ![ROS2](https://img.shields.io/badge/ROS2-Humble-blue)
 ![Gazebo](https://img.shields.io/badge/Gazebo-Classic-orange)
 ![Ubuntu](https://img.shields.io/badge/Ubuntu-22.04-green)
 ![License](https://img.shields.io/badge/License-Apache%202.0-lightgrey)
 
-##  Project Overview
-This project simulates a quadrotor UAV in a closed indoor environment. The drone is equipped with:
-- A **2D Lidar** (360° laser scanner) for environment sensing
-- An **IMU** (Inertial Measurement Unit) for orientation and acceleration data
-- A **Planar motion plugin** for keyboard-controlled flight
-Using this sensor data, **SLAM Toolbox** builds a real-time 2D map of the environment while the drone flies around.
+## Aperçu du projet
+Ce projet simule un drone quadrotor UAV dans un environnement intérieur fermé. Le drone est équipé de :
+- Un **Lidar 2D** (scanner laser 360°) pour la détection de l'environnement
+- Une **IMU** (Inertial Measurement Unit) pour les données d'orientation et d'accélération
+- Un **plugin de mouvement planaire** pour le vol contrôlé au clavier
+En utilisant ces données de capteurs, **SLAM Toolbox** construit une carte 2D en temps réel de l'environnement pendant que le drone vole.
+
 ---
-## 🗂️ Project Structure
+## 🗂️ Structure du projet
 ```
 ros2_drone_slam_ws/
 └── src/
-    ├── drone_description/      # URDF model + Gazebo world + launch
-    │   ├── urdf/
-    │   │   └── quadrotor.urdf.xacro   # Drone blueprint (body, rotors, sensors)
-    │   ├── config/
-    │   │   ├── slam_world.world       # Gazebo environment (room + obstacles)
-    │   │   └── drone.rviz             # RViz2 visualization config
-    │   ├── launch/
-    │   │   └── spawn_drone.launch.py  # Main launch file
-    │   ├── package.xml
-    │   └── CMakeLists.txt
-    │
-    ├── drone_control/          # (coming soon) Keyboard teleop + velocity control
-    ├── drone_slam/             # (coming soon) SLAM Toolbox configuration
-    └── drone_bringup/          # (coming soon) Master launch for everything
+    └── drone_description/      # URDF model + Gazebo world + launch
+        ├── urdf/
+        │   └── quadrotor.urdf.xacro   # Drone blueprint (body, rotors, sensors)
+        ├── config/
+        │   ├── slam_world.world       # Gazebo environment (room + obstacles)
+        │   ├── drone.rviz             # RViz2 visualization config
+        │   └── test_gazebo_spawn.py   # Automated test for Gazebo spawn
+        ├── launch/
+        │   ├── spawn_drone.launch.py  # Main launch file
+        │   └── rotor_animation.py     # Script for rotor animation
+        ├── package.xml
+        └── CMakeLists.txt
 ```
 
 ---
 
-## ⚙️ Prerequisites
+## ⚙️ Prérequis
 
 - Ubuntu 22.04
 - ROS2 Humble
-- Gazebo Classic (comes with ROS2 Humble)
+- Gazebo Classic (fourni avec ROS2 Humble)
 
 ---
 ## 📦 Installation
-### 1. Clone the repository
+### 1. Cloner le dépôt
 ```bash
-git clone https://github.com/mee-113/ros2_drone_slam.git ~/ros2_drone_slam_ws
+git clone https://github.com/1st-adambenjabbar/ros2_drone_slam.git ~/ros2_drone_slam_ws/src/drone_description
 cd ~/ros2_drone_slam_ws
 ```
-### 2. Install dependencies
+### 2. Installer les dépendances
 ```bash
 sudo apt update
 sudo apt install -y \
@@ -62,50 +63,60 @@ sudo apt install -y \
   ros-humble-slam-toolbox \
   ros-humble-teleop-twist-keyboard
 ```
-### 3. Build the workspace
+### 3. Construire l'espace de travail
 ```bash
 source /opt/ros/humble/setup.bash
 colcon build
 source install/setup.bash
 ```
 ---
-## Usage
-###Launh the simulation
+## Utilisation
+### Lancer la simulation
 ```bash
 ros2 launch drone_description spawn_drone.launch.py
 ```
-This opens:
-- **Gazebo** — 3D simulation with the drone and obstacles
-- **RViz2** — live visualization of the drone, lidar scan and transforms
+Ceci ouvre :
+- **Gazebo** — Simulation 3D avec le drone et les obstacles, incluant l'animation des rotors.
+- **RViz2** — Visualisation en direct du drone, du scan lidar et des transformations.
 
-### Control the drone (in a new terminal)
+### Contrôler le drone (dans un nouveau terminal)
 
 ```bash
 source /opt/ros/humble/setup.bash
 ros2 run teleop_twist_keyboard teleop_twist_keyboard
 ```
 
-| Key | Action        |
+| Touche | Action        |
 |-----|---------------|
-| `i` | Forward       |
-| `,` | Backward      |
-| `j` | Turn left     |
-| `l` | Turn right    |
-| `k` | **Stop**      |
-| `q` | Speed up      |
-| `z` | Speed down    |
+| `i` | Avancer       |
+| `,` | Reculer      |
+| `j` | Tourner à gauche     |
+| `l` | Tourner à droite    |
+| `k` | **Arrêter**      |
+| `q` | Accélérer      |
+| `z` | Ralentir    |
 
-### Check active topics
+### Vérifier les topics actifs
 
 ```bash
 ros2 topic list
-ros2 topic echo /scan   # live lidar data
-ros2 topic echo /odom   # live drone position
+ros2 topic echo /scan   # données lidar en direct
+ros2 topic echo /odom   # position du drone en direct
 ```
 
 ---
 
-## 🏗️Architecture
+## 🧪 Tests automatisés
+Pour vérifier que le drone est correctement spawné dans Gazebo, vous pouvez exécuter le script de test :
+```bash
+source /opt/ros/humble/setup.bash
+ros2 run drone_description test_gazebo_spawn.py
+```
+Ce test vérifiera la présence de l'entité 'quadrotor' dans Gazebo et affichera un message de succès ou d'échec.
+
+---
+
+## 🏗️ Architecture
 
 ```
 Keyboard Input
@@ -123,25 +134,30 @@ RViz2                      →  displays everything visually
 
 ---
 
-## 🗺️ Gazebo World
+## 🗺️ Monde Gazebo
 
-The simulation environment is a **10×10 meter indoor room** containing:
-- 4 surrounding walls
-- 2 box obstacles
-- 1 cylindrical obstacle
-- 1 inner wall partition
+L'environnement de simulation est une **pièce intérieure de 10×10 mètres** contenant :
+- 4 murs périphériques
+- 2 obstacles en forme de boîte
+- 1 obstacle cylindrique
+- 1 cloison intérieure
 
-These obstacles are intentional — SLAM requires unique environmental features to localize correctly.
+Ces obstacles sont intentionnels — le SLAM nécessite des caractéristiques environnementales uniques pour se localiser correctement.
 ---
-##  Roadmap
-- [x] Drone URDF model (body, arms, rotors, lidar, IMU)
-- [x] Gazebo world with obstacles
-- [x] Launch file (Gazebo + RViz2 + robot_state_publisher)
-- [ ] Keyboard teleoperation package
-- [ ] SLAM Toolbox integration
-- [ ] Map saving and loading
-- [ ] Nav2 autonomous navigation
+##  Feuille de route
+- [x] Modèle URDF du drone (corps, bras, rotors, lidar, IMU)
+- [x] Monde Gazebo avec obstacles
+- [x] Fichier de lancement (Gazebo + RViz2 + robot_state_publisher)
+- [ ] Package de téléopération au clavier
+- [ ] Intégration de SLAM Toolbox
+- [ ] Sauvegarde et chargement de la carte
+- [ ] Navigation autonome Nav2
+- [x] Animation des rotors
+- [x] Test automatisé de spawn Gazebo
 ---
-##  Author
+##  Auteur
 **Adam Benjabbar**
 - GitHub: [@1st-adambenjabbar](https://github.com/1st-adambenjabbar)
+---
+## 📄 Licence
+Ce projet est sous licence Apache 2.0.
