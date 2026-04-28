@@ -145,6 +145,3 @@ These obstacles are intentional — SLAM requires unique environmental features 
 ##  Author
 **Adam Benjabbar**
 - GitHub: [@1st-adambenjabbar](https://github.com/1st-adambenjabbar)
----
-## 📄 License
-This project is licensed under the Apache 2.0 License.
